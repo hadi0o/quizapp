@@ -1,0 +1,36 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+{% include 'includes/header.html' %}
+
+<body translate="no">
+{# Animated Background #}
+<div class='box'>
+    <div class='wave -one'></div>
+    <div class='wave -two'></div>
+    <div class='wave -three'></div>
+</div>
+
+<div class="login-page">
+    <div class="form">
+        <form class="login-form" method="post">
+            {% csrf_token %}
+
+            {% for error in form.fullname.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+
+            <input style="font-family: '2  Roya'" type="text" id="fullname" name="fullname" placeholder="نام کاربری" required>
+
+            <input style="font-family: '2  Roya'" type="password" id="password" name="password" placeholder="رمز عبور" required>
+
+            <button type="submit">ورود</button>
+            <p class="message">حساب کاربری ندارید؟ <a href="{% url 'account:profile_page' %}">ایجاد حساب</a></p>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>

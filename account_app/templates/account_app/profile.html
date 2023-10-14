@@ -1,0 +1,186 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+{% include 'includes/header.html' %}
+
+<body translate="no">
+    <div class="box">
+        <div class='wave -one'></div>
+        <div class='wave -two'></div>
+        <div class='wave -three'></div>
+    </div>
+
+    <div class="login-page">
+        <div class="form">
+            <form class="register-form"
+                  method="post"
+                  onsubmit="clearForm(event)"
+                  id="forms">
+
+                {% csrf_token %}
+
+                <label class="form-label">نام</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">
+                            <i class="align-middle" data-feather="edit"></i>
+                        </span>
+                        <input
+                            type="text"
+                            class="form-control required alphaonly"
+                            placeholder="نام "
+                            name="name"/>
+                    </div>
+
+                <label class="form-label">سن</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">
+                            <i class="align-middle" data-feather="edit"></i>
+                        </span>
+                        <input
+                            type="number"
+                            class="form-control required"
+                            placeholder="سن"
+                            name="age"
+                            pattern="\d*"
+                            inputmode="numeric"/>
+                    </div>
+
+                <label class="form-label">شماره تلفن</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">
+                            <i class="align-middle" data-feather="edit"></i>
+                        </span>
+                        <input
+                            type="number"
+                            class="form-control required"
+                            placeholder="شماره تلفن"
+                            pattern="\d*"
+                            name="tel"
+                            inputmode="numeric"/>
+                    </div>
+
+                <label class="form-label">جنسیت</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">
+                            <i class="align-middle" data-feather="edit"></i>
+                        </span>
+                        <input
+                            type="text"
+                            class="form-control required"
+                            pattern="(مرد|زن)"
+                            title="لطفا اطلاعات را به درستی وارد کنید : 'مرد' یا 'زن'"
+                            placeholder="جنسیت"
+                            name="sex"
+                            required
+                        />
+                </div>
+
+
+                <label class="form-label">رشته</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">
+                            <i class="align-middle" data-feather="edit"></i>
+                        </span>
+                        <input
+                            type="text"
+                            class="form-control required alphaonly"
+                            placeholder="رشته"
+                            name="field"/>
+                    </div>
+
+                <label class="form-label">شهر</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">
+                            <i class="align-middle" data-feather="edit"></i>
+                        </span>
+                        <input
+                            type="text"
+                            class="form-control required alphaonly"
+                            placeholder="شهر"
+                            name="city"/>
+                    </div>
+
+                <label class="form-label">شبانه روز گذشته چند ساعت خوابیده اید ؟</label>
+                    <div class="input-group mb-3">
+                        <span class="input-group-text">
+                            <i class="align-middle" data-feather="edit"></i>
+                        </span>
+                        <input
+                            type="number"
+                            class="form-control required"
+                            placeholder="مدت خواب"
+                            name="sleep"
+                            pattern="\d*"
+                            inputmode="numeric"/>
+                    </div>
+
+<div id="success-message"></div>
+
+                <button type="submit">ایجاد</button>
+                <p class="message">حساب کاربری دارید؟ <a href="{% url 'account:login_page' %}">ورود</a></p>
+            </form>
+        </div>
+    </div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+  function showToast(title, message) {
+    // Display toast message
+    console.log(title + ": " + message);
+  }
+
+  function clearForm() {
+    event.preventDefault(); // Prevent form submission
+
+    var name = document.forms["forms"]["name"].value;
+    var age = document.forms["forms"]["age"].value;
+    var sex = document.forms["forms"]["sex"].value;
+    var field = document.forms["forms"]["field"].value;
+    var tel = document.forms["forms"]["tel"].value;
+    var sleep = document.forms["forms"]["sleep"].value;
+    var city = document.forms["forms"]["city"].value;
+
+    // Reset form data
+    var formData = {
+        csrfmiddlewaretoken: "{{ csrf_token }}",
+        name: name,
+        age: age,
+        tel: tel,
+        sex: sex,
+        field: field,
+        city: city,
+        sleep: sleep
+    };
+
+    $.ajax({
+      type: "POST",
+      url: "{% url 'account:profile_page' %}",
+      data: formData,
+      dataType: "json",
+      success: function(response) {
+        if (response.success) {
+            $("#success-message").html(response.message);
+            $("#success-message").addClass("show");
+            setTimeout(function(){
+                $("#success-message").html("");
+                $("#success-message").removeClass("show");
+            }, 3000);
+            $('input, textarea').val('');
+        } else {
+          showToast("اطلاعات ثبت نشده است", response.message);
+        }
+      },
+      error: function() {
+        showToast("error", "یک خطایی رخ داده است");
+      },
+    });
+
+    document.querySelector('.register-form').reset();
+  }
+</script>
+
+</body>
+</html>
